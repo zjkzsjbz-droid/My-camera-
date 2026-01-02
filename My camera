@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>كاميرا سيلفي للمحترفين</title>
+    <style>
+        body { text-align: center; font-family: Arial; }
+        video { width: 90%; max-width: 500px; border-radius: 10px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>تطبيق السيلفي الخاص بك</h2>
+    <video id="video" autoplay playsinline></video>
+    <br>
+    <button id="snap">التقاط صورة</button>
+    <br>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <img id="photo" alt="ستظهر صورتك هنا" style="width: 90%; max-width: 500px; border-radius: 10px; margin-top: 10px;">
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById('snap');
+        const photo = document.getElementById('photo');
+
+        // طلب الوصول للكاميرا الأمامية
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                alert("خطأ في الوصول للكاميرا: " + err);
+            });
+
+        // التقاط الصورة عند الضغط على الزر
+        snap.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const data = canvas.toDataURL('image/png');
+            photo.setAttribute('src', data);
+            
+            alert("تم التقاط الصورة! يمكنك الآن الضغط عليها مطولاً لحفظها وإرسالها لميسنجر.");
+        });
+    </script>
+</body>
+</html>
